@@ -24,7 +24,7 @@ const Show = class Show {
         }).catch(() => {
           res.status(200).json({
             code: 200,
-            message: 'You\'r on page: /users/show/' + req.params.id
+            message: 'You\'r on the page: /users/show/' + req.params.id
           })
         })
       } catch (err) {

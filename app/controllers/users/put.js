@@ -20,10 +20,11 @@ class Put {
         this.app.put('/user/put/:id', (req, res) => {
             try {
                 this.UserModel.updateOne({_if: req.params.id}, {_id: req.params.id}, { $set: req.body }).then((user) => {
+                // this.UserModel.updateOne({_if: req.params.id}, {...req.body, _id: req.params.id}).then((user) => {
                     res.status(201).json({user})
                 }).catch(() => {
                     res.status(201).json({
-                        message:'Update successfully'
+                        message:'Update error !'
                     })
                 })
             } catch(err) {
