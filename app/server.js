@@ -10,7 +10,8 @@ const helmet = require('helmet')
 
 // Core
 const config = require('./config.js')
-const routes = require('./controllers/routes.js')
+const routes = require('./routes/routes.js')
+const userRoutes = require('./routes/userRoute')
 
 /**
  * Server
@@ -73,6 +74,7 @@ module.exports = class Server {
     new routes.user.Create(this.app, this.connect, this.config)
     new routes.user.Put(this.app, this.connect, this.config)
     new routes.user.Delete(this.app, this.connect, this.config)
+    new userRoutes.api.Signup(this.app, this.connect, this.config)
 
     // If route not exist
     this.app.use((req, res) => {
