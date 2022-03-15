@@ -6,8 +6,10 @@ const Schema = new mongoose.Schema({
   lastname: String,
   age: Number,
   city: String,
-  email: String, required: true, unique:true,
-  password: String, required: true
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  promo: String,
+  speciality: String
 }, {
   collection: 'users',
   minimize: false,

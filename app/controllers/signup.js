@@ -1,13 +1,12 @@
 const bcrypt = require('bcrypt')
-const User = require('../models/user')
-const {hash} = require("bcrypt");
-const UserModel = require('../../models/user.js')
+const UserModel = require('../models/user.js')
 
 class Signup {
     /**
      * @constructor
      * @param {Object} app
      * @param {Object} config
+     * @param {Object} connect
      */
     constructor (app, connect, config) {
         this.app = app
@@ -22,11 +21,17 @@ class Signup {
     middleware () {
         this.app.post('/api/signup/', (req, res) => {
             try {
-                const userModel = new this.UserModel(req.body)
-                bcrypt.hash(userModel.body.password, 10)
+                bcrypt.hash(req.body.password, 10)
                     .then(hash => {
-                        userModel({
-                            password: hash
+                        const userModel = new this.UserModel({
+                            firstname: req.body.firstname,
+                            lastname: req.body.lastname,
+                            age: req.body.age,
+                            city: req.body.city,
+                            email: req.body.email,
+                            password: hash,
+                            promo: req.body.promo,
+                            speciality: req.body.speciality
                         })
                         userModel.save().then((user) => {
                             res.status(201).json(user || {})
@@ -57,22 +62,3 @@ class Signup {
 }
 
 module.exports = Signup
-
-// exports.signup = (req, res, next) => {
-//     bcrypt.hash(req.body.password, 10)
-//         .then(hash => {
-//             const user = new User({
-//               email: req.body.email,
-//               password: hash
-//             })
-//             user.save()
-//                 .then(res.status(201).json({ message: 'Utilisateur créé !' }))
-//                 .catch(error => res.status(400).json({ error }))
-//         })
-//         .catch(error => res.status(500).json({ error }))
-// }
-//
-// exports.login = (req, res, next) => {
-//
-// }
-

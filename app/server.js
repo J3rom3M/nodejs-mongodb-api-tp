@@ -11,7 +11,6 @@ const helmet = require('helmet')
 // Core
 const config = require('./config.js')
 const routes = require('./routes/routes.js')
-const userRoutes = require('./routes/userRoute')
 
 /**
  * Server
@@ -44,6 +43,7 @@ module.exports = class Server {
         console.log('[DISCONNECTED] users api dbConnect() -> mongodb disconnected')
         this.connect = this.dbConnect(host)
       }, 5000)
+      console.error(`[ERROR] mongodb disconnected -> ${err}`)
     })
 
     process.on('SIGINT', () => {
@@ -64,6 +64,21 @@ module.exports = class Server {
     this.app.use(cors())
     this.app.use(bodyParser.urlencoded({ 'extended': true }))
     this.app.use(bodyParser.json())
+
+    // Add headers before the routes are defined
+    this.app.use(function (req, res, next) {
+      // Website you wish to allow to connect
+      res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+      // Request methods you wish to allow
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+      // Request headers you wish to allow
+      res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+      // Set to true if you need the website to include cookies in the requests sent
+      // to the API (e.g. in case you use sessions)
+      res.setHeader('Access-Control-Allow-Credentials', true);
+      // Pass to next layer of middleware
+      next();
+    });
   }
 
   /**
@@ -74,7 +89,8 @@ module.exports = class Server {
     new routes.user.Create(this.app, this.connect, this.config)
     new routes.user.Put(this.app, this.connect, this.config)
     new routes.user.Delete(this.app, this.connect, this.config)
-    new userRoutes.api.Signup(this.app, this.connect, this.config)
+    new routes.api.Signup(this.app, this.connect, this.config)
+    new routes.api.Login(this.app, this.connect, this.config)
 
     // If route not exist
     this.app.use((req, res) => {
